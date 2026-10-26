@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TLS ADEC ASSESSMENT - Hospital Kuala Nerang</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-blue: #2c3e50;
+      --accent-airway: #3498db;
+      --accent-circ: #e67e22;
+      --accent-immo: #8e44ad;
+      --accent-primary: #c0392b;
+    }
+
+    body {
+      background-color: #f4f7f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Floating Navigation */
+    nav {
+      position: sticky;
+      top: 15px;
+      z-index: 1000;
+      max-width: 900px;
+      margin: 0 auto;
+      width: calc(100% - 30px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 50px;
+      padding: 10px 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: #2c3e50;
+    }
+
+    .dept-logo {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-text span {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #7f8c8d;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      padding: 50px 15px 30px;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #2c3e50;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      color: #7f8c8d;
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Station Cards */
+    .station-grid {
+      max-width: 950px;
+      margin: 0 auto 60px;
+      padding: 0 15px;
+    }
+
+    .station-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      padding: 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease-in-out;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .station-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+      color: inherit;
+    }
+
+    .card-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+    }
+
+    .station-card.airway .card-top-bar { background-color: var(--accent-airway); }
+    .station-card.circ .card-top-bar { background-color: var(--accent-circ); }
+    .station-card.immo .card-top-bar { background-color: var(--accent-immo); }
+    .station-card.primary .card-top-bar { background-color: var(--accent-primary); }
+
+    .station-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .station-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .airway .station-icon { background: #ebf5fb; color: var(--accent-airway); }
+    .circ .station-icon { background: #fef5e7; color: var(--accent-circ); }
+    .immo .station-icon { background: #f4ecf7; color: var(--accent-immo); }
+    .primary .station-icon { background: #fdedec; color: var(--accent-primary); }
+
+    .station-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .station-desc {
+      font-size: 0.9rem;
+      color: #636e72;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .station-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f1f2f6;
+      padding-top: 14px;
+    }
+
+    .badge-points {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
+
+    .airway .badge-points { background: #ebf5fb; color: var(--accent-airway); }
+    .circ .badge-points { background: #fef5e7; color: var(--accent-circ); }
+    .immo .badge-points { background: #f4ecf7; color: var(--accent-immo); }
+    .primary .badge-points { background: #fdedec; color: var(--accent-primary); }
+
+    .action-link {
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .airway .action-link { color: var(--accent-airway); }
+    .circ .action-link { color: var(--accent-circ); }
+    .immo .action-link { color: var(--accent-immo); }
+    .primary .action-link { color: var(--accent-primary); }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      background: #ffffff;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 35px 20px;
+    }
+
+    .footer-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .footer-logos {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-logos img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-divider {
+      width: 1px;
+      height: 30px;
+      background-color: #dcdde1;
+    }
+
+    .footer-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8f9fa;
+      border: 1px solid #edf2f7;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2d3436;
+      letter-spacing: 0.3px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #2ecc71;
+      border-radius: 50%;
+      box-shadow: 0 0 0 rgba(46, 204, 113, 0.4);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(46, 204, 113, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+      }
+    }
+
+    .footer-copyright {
+      font-size: 0.85rem;
+      color: #95a5a6;
+      margin: 0;
+    }
+
+    .footer-copyright span {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigasi Utama Terapung -->
+  <nav>
+    <a href="#" class="logo-group">
+      <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="Logo Jabatan" class="dept-logo">
+      <div class="logo-text">
+        Hospital Kuala Nerang
+        <span>Jabatan Kecemasan & Trauma</span>
+      </div>
+    </a>
+  </nav>
+
+  <!-- Hero Title -->
+  <section class="hero-section">
+    <h1 class="hero-title">TLS ADEC ASSESSMENT</h1>
+    <p class="hero-subtitle">Trauma Life Support Skill Assessment Portal. Select an evaluation station below to proceed.</p>
+  </section>
+
+  <!-- Station Links -->
+  <main class="station-grid">
+    <div class="row g-4">
+      
+      <!-- Airway Station -->
+      <div class="col-md-6">
+        <a href="airway.html" class="station-card airway">
+          <div class="card-top-bar"></div>
+          <div>
+            <div class="station-header">
+              <div class="station-icon">
+                <i class="bi bi-lungs-fill"></i>
+              </div>
+              <h2 class="station-name">Airway Station</h2>
+            </div>
+            <p class="station-desc">Manual airway opening, adjuncts placement, bag-valve-mask ventilation, equipment selection, and intubation verification.</p>
+          </div>
+          <div class="station-footer">
+            <span class="badge-points">12 Evaluation Items</span>
+            <span class="action-link">Open Station <i class="bi bi-arrow-right-short fs-5"></i></span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Circulation Station -->
+      <div class="col-md-6">
+        <a href="circulation.html" class="station-card circ">
+          <div class="card-top-bar"></div>
+          <div>
+            <div class="station-header">
+              <div class="station-icon">
+                <i class="bi bi-heart-pulse-fill"></i>
+              </div>
+              <h2 class="station-name">Circulation Station</h2>
+            </div>
+            <p class="station-desc">Shock classification, vascular access, proximal humerus IO insertion, fluid resuscitation, and tourniquet application.</p>
+          </div>
+          <div class="station-footer">
+            <span class="badge-points">8 Evaluation Items</span>
+            <span class="action-link">Open Station <i class="bi bi-arrow-right-short fs-5"></i></span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Immobilization Station -->
+      <div class="col-md-6">
+        <a href="immo.html" class="station-card immo">
+          <div class="card-top-bar"></div>
+          <div>
+            <div class="station-header">
+              <div class="station-icon">
+                <i class="bi bi-person-fill-lock"></i>
+              </div>
+              <h2 class="station-name">Immobilization Station</h2>
+            </div>
+            <p class="station-desc">In-line head stabilization, neurovascular checks, cervical collar sizing/application, back sweep, and T-POD pelvic binder securing.</p>
+          </div>
+          <div class="station-footer">
+            <span class="badge-points">7 Evaluation Items</span>
+            <span class="action-link">Open Station <i class="bi bi-arrow-right-short fs-5"></i></span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Primary Survey Station -->
+      <div class="col-md-6">
+        <a href="primary.html" class="station-card primary">
+          <div class="card-top-bar"></div>
+          <div>
+            <div class="station-header">
+              <div class="station-icon">
+                <i class="bi bi-shield-fill-plus"></i>
+              </div>
+              <h2 class="station-name">Primary Survey Station</h2>
+            </div>
+            <p class="station-desc">Red Zone scenario: Tension pneumothorax, finger thoracostomy, IPPA, CCTVR circulatory check, pupil reflex, and primary adjuncts.</p>
+          </div>
+          <div class="station-footer">
+            <span class="badge-points">14 Evaluation Items</span>
+            <span class="action-link">Open Station <i class="bi bi-arrow-right-short fs-5"></i></span>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logos">
+        <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="HKN Logo">
+        <div class="logo-divider"></div>
+        <img src="https://lh3.googleusercontent.com/d/1LdMRx-PF49CWOcrjthClGLJg-yQoJ2mt" alt="MOH Logo">
+      </div>
+
+      <div class="footer-status">
+        <span class="pulse-dot"></span>
+        <span>EDHKN PORTAL Ver 2.0</span>
+      </div>
+
+      <p class="footer-copyright">© 2026 <span>Yassin Razak</span> | All Rights Reserved</p>
+    </div>
+  </footer>
+
+</body>
+</html>
