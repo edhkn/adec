@@ -22,8 +22,27 @@
     
     <div class="mb-4">
       <label class="form-label fw-bold">NAME :</label>
-      <select class="form-select" id="studentSelect" required>
-        <option value="" disabled selected>Loading names from Google Sheet...</option>
+      <select class="form-select" id="studentName" required>
+        <option value="" disabled selected>Select student name...</option>
+        <option value="ABDUL LATIFF BIN SHARI">ABDUL LATIFF BIN SHARI</option>
+        <option value="AHMAD AZIM AFIFI BIN SHARUPUDDIN">AHMAD AZIM AFIFI BIN SHARUPUDDIN</option>
+        <option value="AKMAL RIDHWAN BIN YUSRIZAL">AKMAL RIDHWAN BIN YUSRIZAL</option>
+        <option value="ARIF AKMAL BIN ABDUL WAHAB">ARIF AKMAL BIN ABDUL WAHAB</option>
+        <option value="BUVANESWARY A/P PUSHPARAJAH">BUVANESWARY A/P PUSHPARAJAH</option>
+        <option value="CHIN HUI ZHI">CHIN HUI ZHI</option>
+        <option value="HARISAH BINTI OMAR">HARISAH BINTI OMAR</option>
+        <option value="MOHAMAD FADZIL BIN ROMLI">MOHAMAD FADZIL BIN ROMLI</option>
+        <option value="MOHAMAD NIZAM BIN MOHAMAD BAKRI">MOHAMAD NIZAM BIN MOHAMAD BAKRI</option>
+        <option value="MOHD FIRDAUS BIN MUSA">MOHD FIRDAUS BIN MUSA</option>
+        <option value="MOHD RAIMI SHAFRY BIN ROSAIDI">MOHD RAIMI SHAFRY BIN ROSAIDI</option>
+        <option value="MOHD SYAFIQ BIN ISMAIL">MOHD SYAFIQ BIN ISMAIL</option>
+        <option value="PERREVITHA A/P KRISHNAN">PERREVITHA A/P KRISHNAN</option>
+        <option value="ROSLINA BINTI MOHAMED OMAR">ROSLINA BINTI MOHAMED OMAR</option>
+        <option value="SITI NOORDIYANA BINTI MOHD ROSDI">SITI NOORDIYANA BINTI MOHD ROSDI</option>
+        <option value="SITI NURJANNAH BINTI HANIZAN">SITI NURJANNAH BINTI HANIZAN</option>
+        <option value="THIBACINI A/P MOHAN">THIBACINI A/P MOHAN</option>
+        <option value="ZAINAB BINTI HASAN">ZAINAB BINTI HASAN</option>
+        <option value="ZAYANI ADLINA BINTI ZALIZAN">ZAYANI ADLINA BINTI ZALIZAN</option>
       </select>
     </div>
 
@@ -97,30 +116,6 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyG2c-f6h2yJSlSwa6yuANjKnscsH-S9S1lNih9YFRx4WMH_vFRDOw8CnSHVoI51_02/exec";
 
-  // Load student list dynamically from Google Sheet
-  document.addEventListener("DOMContentLoaded", function() {
-    fetch(`${API_URL}?action=getStudents`)
-      .then(response => response.json())
-      .then(names => {
-        const select = document.getElementById('studentSelect');
-        select.innerHTML = '<option value="" disabled selected>Select a student...</option>';
-        if (names.length === 0) {
-          select.innerHTML = '<option value="" disabled selected>No students found in sheet</option>';
-          return;
-        }
-        names.forEach(name => {
-          let opt = document.createElement('option');
-          opt.value = name;
-          opt.textContent = name;
-          select.appendChild(opt);
-        });
-      })
-      .catch(err => {
-        document.getElementById('studentSelect').innerHTML = '<option value="" disabled selected>Error loading students</option>';
-      });
-  });
-
-  // Submit data to Apps Script
   function submitAssessment() {
     const submitBtn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('statusAlert');
@@ -131,7 +126,7 @@
 
     const payload = {
       formType: "Airway",
-      studentName: document.getElementById('studentSelect').value,
+      studentName: document.getElementById('studentName').value,
       result: document.querySelector('input[name="result"]:checked').value,
       instructorPotential: document.getElementById('instructorPotential').checked,
       instructorName: document.getElementById('instructorName').value
