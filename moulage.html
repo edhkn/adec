@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TLS ADEC - Moulage Assessment | Hospital Kuala Nerang</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-indigo: #4f46e5;
+      --indigo-light: #6366f1;
+      --indigo-subtle: #e0e7ff;
+      --indigo-border: #c7d2fe;
+      --dark-navy: #1e293b;
+      --slate-text: #475569;
+    }
+
+    body {
+      background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 180px, #f1f5f9 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--dark-navy);
+    }
+
+    /* Floating Navigation */
+    nav {
+      position: sticky;
+      top: 15px;
+      z-index: 1000;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: calc(100% - 30px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 50px;
+      padding: 10px 24px;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: #2c3e50;
+    }
+
+    .dept-logo {
+      height: 46px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-text span {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .back-portal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary-indigo);
+      background: var(--indigo-subtle);
+      border: 1px solid var(--indigo-border);
+      padding: 7px 16px;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .back-portal-btn:hover {
+      background: var(--primary-indigo);
+      color: #ffffff;
+    }
+
+    /* Main Container */
+    .sheet-wrapper {
+      max-width: 900px;
+      width: 100%;
+      margin: 30px auto 60px;
+      padding: 0 16px;
+    }
+
+    /* Top Control Card */
+    .top-control-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      margin-bottom: 24px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--indigo-subtle);
+      color: var(--primary-indigo);
+      border: 1px solid var(--indigo-border);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .sheet-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--dark-navy);
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    /* Category Blocks */
+    .category-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid var(--indigo-light);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+    
+    .category-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-indigo);
+      margin-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 10px;
+    }
+
+    .question-block {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 12px 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.95rem;
+      flex-grow: 1;
+    }
+
+    /* Radio Controls */
+    .btn-group-options {
+      display: flex;
+      gap: 8px;
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+
+    .btn-option {
+      position: relative;
+      flex: 1;
+    }
+
+    .btn-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .btn-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-option input.done:checked + label {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-option input.not-done:checked + label {
+      background: #ef4444;
+      color: white;
+      border-color: #ef4444;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Submit Dock */
+    .submit-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      margin-top: 24px;
+    }
+
+    .btn-submit-main {
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      color: #ffffff;
+      border: none;
+      padding: 14px 42px;
+      border-radius: 40px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      width: 100%;
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.28);
+      transition: all 0.22s ease;
+    }
+
+    .btn-submit-main:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(79, 70, 229, 0.36);
+    }
+
+    footer {
+      margin-top: auto;
+      background: #ffffff;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 35px 20px;
+    }
+
+    .footer-container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+    .footer-logos { display: flex; align-items: center; gap: 16px; }
+    .footer-logos img { height: 42px; width: auto; object-fit: contain; }
+    .logo-divider { width: 1px; height: 30px; background-color: #dcdde1; }
+    .footer-status { display: inline-flex; align-items: center; gap: 8px; background: #f8f9fa; border: 1px solid #edf2f7; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #2d3436; }
+    .pulse-dot { width: 8px; height: 8px; background-color: #2ecc71; border-radius: 50%; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(46, 204, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
+    .footer-copyright { font-size: 0.85rem; color: #95a5a6; margin: 0; }
+    .footer-copyright span { font-weight: 600; color: #2c3e50; }
+
+    @media (max-width: 768px) {
+      .question-block { flex-direction: column; }
+      .btn-group-options { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo-group">
+      <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="Logo Jabatan" class="dept-logo">
+      <div class="logo-text">
+        Hospital Kuala Nerang
+        <span>Jabatan Kecemasan & Trauma</span>
+      </div>
+    </a>
+    <a href="index.html" class="back-portal-btn">
+      <i class="bi bi-arrow-left"></i> Hub Portal
+    </a>
+  </nav>
+
+  <main class="sheet-wrapper">
+    <form id="moulageForm" onsubmit="event.preventDefault(); submitAssessment();">
+      
+      <section class="top-control-card">
+        <div class="header-badge"><i class="bi bi-clipboard2-pulse-fill"></i> Field Assessment</div>
+        <h1 class="sheet-title">TLS Moulage Assessment</h1>
+        <p class="text-muted mb-4">Complete 38-point full trauma simulation evaluation.</p>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold text-uppercase text-secondary mb-2" for="studentName">Participant Name</label>
+          <select class="form-select form-select-lg border-2" id="studentName" required style="font-size: 0.95rem; border-radius: 12px;">
+            <option value="" disabled selected>Select participant name...</option>
+            <option value="ABDUL LATIFF BIN SHARI">ABDUL LATIFF BIN SHARI</option>
+            <option value="AHMAD AZIM AFIFI BIN SHARUPUDDIN">AHMAD AZIM AFIFI BIN SHARUPUDDIN</option>
+            <option value="AKMAL RIDHWAN BIN YUSRIZAL">AKMAL RIDHWAN BIN YUSRIZAL</option>
+            <option value="ARIF AKMAL BIN ABDUL WAHAB">ARIF AKMAL BIN ABDUL WAHAB</option>
+            <option value="BUVANESWARY A/P PUSHPARAJAH">BUVANESWARY A/P PUSHPARAJAH</option>
+            <option value="CHIN HUI ZHI">CHIN HUI ZHI</option>
+            <option value="HARISAH BINTI OMAR">HARISAH BINTI OMAR</option>
+            <option value="MOHAMAD FADZIL BIN ROMLI">MOHAMAD FADZIL BIN ROMLI</option>
+            <option value="MOHAMAD NIZAM BIN MOHAMAD BAKRI">MOHAMAD NIZAM BIN MOHAMAD BAKRI</option>
+            <option value="MOHD FIRDAUS BIN MUSA">MOHD FIRDAUS BIN MUSA</option>
+            <option value="MOHD RAIMI SHAFRY BIN ROSAIDI">MOHD RAIMI SHAFRY BIN ROSAIDI</option>
+            <option value="MOHD SYAFIQ BIN ISMAIL">MOHD SYAFIQ BIN ISMAIL</option>
+            <option value="PERREVITHA A/P KRISHNAN">PERREVITHA A/P KRISHNAN</option>
+            <option value="ROSLINA BINTI MOHAMED OMAR">ROSLINA BINTI MOHAMED OMAR</option>
+            <option value="SITI NOORDIYANA BINTI MOHD ROSDI">SITI NOORDIYANA BINTI MOHD ROSDI</option>
+            <option value="SITI NURJANNAH BINTI HANIZAN">SITI NURJANNAH BINTI HANIZAN</option>
+            <option value="THIBACINI A/P MOHAN">THIBACINI A/P MOHAN</option>
+            <option value="ZAINAB BINTI HASAN">ZAINAB BINTI HASAN</option>
+            <option value="ZAYANI ADLINA BINTI ZALIZAN">ZAYANI ADLINA BINTI ZALIZAN</option>
+          </select>
+        </div>
+      </section>
+
+      <div id="assessmentContainer"></div>
+
+      <script>
+        const categories = [
+          { title: "1. Team Dynamic", items: ["Assign team members role", "Able to give instruction clearly", "Has characteristic of Good Team Leader"] },
+          { title: "2. Zero Point Survey (Preparation)", items: ["Brief team members using 'AT MIST'", "Assign team members role", "Verbalize the usage of PPE such as mask, apron, gloves", "Preparation of equipment"] },
+          { title: "3. Trauma Reception (Rapid Assessment)", items: ["Assess for airway patency", "Assess for central pulse", "Assess for visible catastrophic hemorrhage"] },
+          { title: "4. Catastrophic External Bleeding", items: ["Recognition of catastrophic external hemorrhage and appropriate measure is taken to control the bleeding"] },
+          { title: "5. Airway & Cervical Collar", items: ["Able to assess airway appropriately", "Apply Hard Cervical Collar and/or Head Immobilizer correctly", "Able to recognise life threatening airway problems", "Correct emergency intervention (e.g. jaw thrust, chin lift, OPA, suction)"] },
+          { title: "6. Breathing & Ventilation", items: ["Trachea assessment", "Chest examination by (IPPA)", "Able to recognise life threatening thoracic injuries (ATOMTC)", "Correct emergency intervention"] },
+          { title: "7. Circulation", items: ["Complete assessment of peripheral circulation", "Correct assessment of Abdomen", "Correct assessment of Pelvic", "Assessment of upper and lower limbs", "Able to recognise exsanguinating blood loss", "Correct emergency intervention for hypovolemic shock (e.g. warm saline, TXA, MTP)", "Correct specialized technique (pelvic binder, limb splint, tourniquet, IO insertion)"] },
+          { title: "8. Disability", items: ["Able to assess pupils", "Able to perform GCS assessment", "Able to interpret the GCS result (mild, moderate or severe)", "Able to assess neurological deficit (if indicated)"] },
+          { title: "9. Exposure", items: ["Demonstrate proper exposure", "Demonstrate prevention of hypothermia technique"] },
+          { title: "10. Primary Adjunct", items: ["Able to order appropriate primary adjunct", "Able to interpret correctly"] },
+          { title: "11. Clinical Diagnosis", items: ["Able to give appropriate clinical diagnosis"] },
+          { title: "12. Definitive Plan", items: ["Able to verbalize Definitive treatment plan (Transfer / Referral)"] },
+          { title: "13. Secondary Survey", items: ["Able to perform head to toe examination", "Able to order appropriate secondary adjuncts"] }
+        ];
+
+        let globalItemCounter = 1;
+        const container = document.getElementById("assessmentContainer");
+
+        categories.forEach(cat => {
+          let html = `<div class="category-card"><h3 class="category-title">${cat.title}</h3>`;
+          cat.items.forEach(item => {
+            html += `
+              <div class="question-block">
+                <div class="question-text">${globalItemCounter}. ${item}</div>
+                <div class="btn-group-options">
+                  <div class="btn-option">
+                    <input type="radio" class="done" name="item${globalItemCounter}" id="item${globalItemCounter}_done" value="DONE" required>
+                    <label for="item${globalItemCounter}_done">DONE</label>
+                  </div>
+                  <div class="btn-option">
+                    <input type="radio" class="not-done" name="item${globalItemCounter}" id="item${globalItemCounter}_notdone" value="NOT DONE">
+                    <label for="item${globalItemCounter}_notdone">NOT DONE</label>
+                  </div>
+                </div>
+              </div>
+            `;
+            globalItemCounter++;
+          });
+          html += `</div>`;
+          container.insertAdjacentHTML('beforeend', html);
+        });
+      </script>
+
+      <!-- Bottom Submission Info -->
+      <section class="submit-card">
+        <h3 class="category-title text-dark">Final Evaluation</h3>
+        
+        <!-- Pass/Remedial/Fail -->
+        <div class="mb-4">
+          <label class="fw-bold mb-2">Overall Result *</label>
+          <div class="d-flex gap-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="result" id="res_pass" value="PASS" required>
+              <label class="form-check-label text-success fw-bold" for="res_pass">PASS</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="result" id="res_remedial" value="REMEDIAL">
+              <label class="form-check-label text-warning fw-bold" for="res_remedial">REMEDIAL</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="result" id="res_fail" value="FAIL">
+              <label class="form-check-label text-danger fw-bold" for="res_fail">FAIL</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4 form-check bg-light p-3 border rounded">
+          <input type="checkbox" class="form-check-input ms-1" id="bestStudent" value="YES">
+          <label class="form-check-label fw-bold text-primary ms-3" for="bestStudent">BEST STUDENT CANDIDATE</label>
+        </div>
+
+        <div class="mb-4">
+          <label class="fw-bold mb-2">Comments</label>
+          <textarea class="form-control" id="commentsBox" rows="3" placeholder="Enter evaluator comments..."></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="fw-bold mb-2">Instructor's Name *</label>
+          <input type="text" class="form-control" id="instructorName" placeholder="Sign-off name" required>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit-main mt-3">
+          <i class="bi bi-cloud-arrow-up-fill fs-5 me-2"></i> Submit Assessment (38 Pts)
+        </button>
+        
+        <div id="statusAlert" class="alert mt-4 text-center fw-bold" style="display:none; border-radius: 12px;"></div>
+      </section>
+
+    </form>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logos">
+        <img src="https://lh3.googleusercontent.com/d/1O2Nj1Dr4U6wo7ISjdkDRukPYwZUkOOuJ" alt="HKN Logo">
+        <div class="logo-divider"></div>
+        <img src="https://lh3.googleusercontent.com/d/1LdMRx-PF49CWOcrjthClGLJg-yQoJ2mt" alt="MOH Logo">
+      </div>
+      <div class="footer-status"><span class="pulse-dot"></span><span>EDHKN PORTAL Ver 2.0</span></div>
+      <p class="footer-copyright">© 2026 <span>Yassin Razak</span> | All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyG2c-f6h2yJSlSwa6yuANjKnscsH-S9S1lNih9YFRx4WMH_vFRDOw8CnSHVoI51_02/exec";
+
+    function submitAssessment() {
+      const submitBtn = document.getElementById('submitBtn');
+      const alertBox = document.getElementById('statusAlert');
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Saving Data...`;
+      alertBox.style.display = "none";
+
+      const payload = {
+        formType: "Moulage",
+        studentName: document.getElementById('studentName').value,
+        result: document.querySelector('input[name="result"]:checked').value,
+        bestStudent: document.getElementById('bestStudent').checked,
+        comments: document.getElementById('commentsBox').value,
+        instructorName: document.getElementById('instructorName').value
+      };
+
+      for (let i = 1; i <= 38; i++) {
+        payload[`item${i}`] = document.querySelector(`input[name="item${i}"]:checked`).value;
+      }
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('moulageForm').reset();
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="bi bi-cloud-arrow-up-fill fs-5 me-2"></i> Submit Assessment (38 Pts)`;
+        
+        alertBox.className = "alert alert-success mt-4 text-center fw-bold";
+        alertBox.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i> Moulage Assessment successfully saved!`;
+        alertBox.style.display = "block";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        setTimeout(() => { alertBox.style.display = "none"; }, 6000);
+      })
+      .catch(error => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="bi bi-cloud-arrow-up-fill fs-5 me-2"></i> Submit Assessment (38 Pts)`;
+        
+        alertBox.className = "alert alert-danger mt-4 text-center fw-bold";
+        alertBox.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i> Submission failed: ${error.message}`;
+        alertBox.style.display = "block";
+      });
+    }
+  </script>
+</body>
+</html>
