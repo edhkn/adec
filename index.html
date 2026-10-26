@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,7 @@
       --accent-circ: #e67e22;
       --accent-immo: #8e44ad;
       --accent-primary: #c0392b;
+      --accent-mcq: #16a085;
     }
 
     body {
@@ -70,7 +72,7 @@
     /* Hero Section */
     .hero-section {
       text-align: center;
-      padding: 50px 15px 30px;
+      padding: 45px 15px 25px;
     }
 
     .hero-title {
@@ -130,6 +132,7 @@
     .station-card.circ .card-top-bar { background-color: var(--accent-circ); }
     .station-card.immo .card-top-bar { background-color: var(--accent-immo); }
     .station-card.primary .card-top-bar { background-color: var(--accent-primary); }
+    .station-card.mcq .card-top-bar { background-color: var(--accent-mcq); }
 
     .station-header {
       display: flex;
@@ -152,6 +155,7 @@
     .circ .station-icon { background: #fef5e7; color: var(--accent-circ); }
     .immo .station-icon { background: #f4ecf7; color: var(--accent-immo); }
     .primary .station-icon { background: #fdedec; color: var(--accent-primary); }
+    .mcq .station-icon { background: #e8f8f5; color: var(--accent-mcq); }
 
     .station-name {
       font-size: 1.15rem;
@@ -186,6 +190,7 @@
     .circ .badge-points { background: #fef5e7; color: var(--accent-circ); }
     .immo .badge-points { background: #f4ecf7; color: var(--accent-immo); }
     .primary .badge-points { background: #fdedec; color: var(--accent-primary); }
+    .mcq .badge-points { background: #e8f8f5; color: var(--accent-mcq); }
 
     .action-link {
       font-size: 0.88rem;
@@ -199,6 +204,7 @@
     .circ .action-link { color: var(--accent-circ); }
     .immo .action-link { color: var(--accent-immo); }
     .primary .action-link { color: var(--accent-primary); }
+    .mcq .action-link { color: var(--accent-mcq); }
 
     /* Footer */
     footer {
@@ -299,13 +305,33 @@
   <!-- Hero Title -->
   <section class="hero-section">
     <h1 class="hero-title">TLS ADEC ASSESSMENT</h1>
-    <p class="hero-subtitle">Trauma Life Support Skill Assessment Portal. Select an evaluation station below to proceed.</p>
+    <p class="hero-subtitle">Trauma Life Support Skill Assessment Portal. Select an evaluation station or the MCQ answer sheet below.</p>
   </section>
 
-  <!-- Station Links -->
+  <!-- Assessment Grid -->
   <main class="station-grid">
     <div class="row g-4">
       
+      <!-- MCQ Answer Sheet -->
+      <div class="col-12">
+        <a href="mcqsheet.html" class="station-card mcq">
+          <div class="card-top-bar"></div>
+          <div>
+            <div class="station-header">
+              <div class="station-icon">
+                <i class="bi bi-file-earmark-check-fill"></i>
+              </div>
+              <h2 class="station-name">MCQ Answer Sheet</h2>
+            </div>
+            <p class="station-desc">Written evaluation: Answer sheet for Question 1 to Question 40 (Options A, B, C, D) with automatic scoring and direct Google Sheets submission.</p>
+          </div>
+          <div class="station-footer">
+            <span class="badge-points">40 Questions (Auto-Graded)</span>
+            <span class="action-link">Open Answer Sheet <i class="bi bi-arrow-right-short fs-5"></i></span>
+          </div>
+        </a>
+      </div>
+
       <!-- Airway Station -->
       <div class="col-md-6">
         <a href="airway.html" class="station-card airway">
@@ -409,3 +435,5 @@
 
 </body>
 </html>
+
+```
