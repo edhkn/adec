@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TLS ADEC - CIRCULATION</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f4f7f6; padding: 20px; }
+    .form-container { background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
+    h2 { color: #d35400; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #d35400; padding-bottom: 10px; }
+    .scenario-box { background-color: #ffeaa7; padding: 15px; border-radius: 5px; border-left: 5px solid #fdcb6e; margin-bottom: 20px; color: #2d3436; font-size: 1.05rem; }
+    .question-block { background: #fdfaf4; border-left: 4px solid #e67e22; padding: 15px; margin-bottom: 15px; border-radius: 4px; }
+    .question-title { font-weight: 600; margin-bottom: 8px; color: #34495e; }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2 class="text-center">TLS ADEC - CIRCULATION</h2>
+  
+  <div class="scenario-box fw-bold">
+    📋 Scenario:<br>
+    <span class="fw-normal">You’re attending a trauma patient. Upon assessment, patient appears drowsy.</span><br>
+    Vital sign: <span class="text-danger">HR 120 bpm, BP 90/70 mmHg</span>
+  </div>
+
+  <form id="assessmentForm" onsubmit="event.preventDefault(); submitAssessment();">
+    
+    <div class="mb-4">
+      <label class="form-label fw-bold">NAME :</label>
+      <select class="form-select" id="studentSelect" required>
+        <option value="" disabled selected>Loading names from Google Sheet...</option>
+      </select>
+    </div>
+
+    <h4 class="mb-3 text-secondary">Skill Checklist (1 point each)</h4>
+
+    <script>
+      const questions = [
+        "Classification of shock (Class III)",
+        "insert 2 large bore branula (minimum of 18 G)",
+        "indications for IO",
+        "sites and anatomy landmarks for IO insertion - PROXIMAL HUMERUS",
+        "how much fluid to infuse? type of fluid?",
+        "fully expose the wound and cut clothing if not previously done",
+        "place a stack of gauze pads over that area and press down firmly. Hold for 5-10 minutes if using gauze or 3 minutes if using hemostatic gauze",
+        "if bleeding is not controlled, proceed with placing tourniquet - CAT tourniquet"
+      ];
+
+      questions.forEach((q, index) => {
+        let qNum = index + 1;
+        document.write(`
+          <div class="question-block">
+            <div class="question-title">${qNum}. ${q}</div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="item${qNum}" id="item${qNum}_done" value="DONE" required>
+              <label class="form-check-label text-success fw-bold" for="item${qNum}_done">DONE</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="item${qNum}" id="item${qNum}_notdone" value="NOT DONE">
+              <label class="form-check-label text-danger fw-bold" for="item${qNum}_notdone">NOT DONE</label>
+            </div>
+          </div>
+        `);
+      });
+    </script>
+
+    <hr class="my-4">
+    <div class="mb-4 question-block" style="border-left-color: #e74c3c;">
+      <label class="question-title fs-5">RESULT *</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="result" id="res_pass" value="PASS" required>
+        <label class="form-check-label text-success fw-bold" for="res_pass">PASS</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="result" id="res_fail" value="FAILED">
+        <label class="form-check-label text-danger fw-bold" for="res_fail">FAILED</label>
+      </div>
+    </div>
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="instructorPotential" value="YES">
+      <label class="form-check-label fw-bold text-primary" for="instructorPotential">INSTRUCTOR POTENTIAL</label>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold">NAME OF INSTRUCTOR :</label>
+      <input type="text" class="form-control" id="instructorName" placeholder="Enter Instructor Name" required>
+    </div>
+
+    <div class="d-grid gap-2">
+      <button type="submit" id="submitBtn" class="btn btn-warning btn-lg fw-bold text-dark">Submit Assessment</button>
+    </div>
+
+    <div id="statusAlert" class="alert mt-3" style="display:none;"></div>
+  </form>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyG2c-f6h2yJSlSwa6yuANjKnscsH-S9S1lNih9YFRx4WMH_vFRDOw8CnSHVoI51_02/exec";
+
+  document.addEventListener("DOMContentLoaded", function() {
+    fetch(`${API_URL}?action=getStudents`)
+      .then(response => response.json())
+      .then(names => {
+        const select = document.getElementById('studentSelect');
+        select.innerHTML = '<option value="" disabled selected>Select a student...</option>';
+        if (names.length === 0) {
+          select.innerHTML = '<option value="" disabled selected>No students found in sheet</option>';
+          return;
+        }
+        names.forEach(name => {
+          let opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          select.appendChild(opt);
+        });
+      })
+      .catch(err => {
+        document.getElementById('studentSelect').innerHTML = '<option value="" disabled selected>Error loading students</option>';
+      });
+  });
+
+  function submitAssessment() {
+    const submitBtn = document.getElementById('submitBtn');
+    const alertBox = document.getElementById('statusAlert');
+    
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting Data...";
+    alertBox.style.display = "none";
+
+    const payload = {
+      formType: "Circulation",
+      studentName: document.getElementById('studentSelect').value,
+      result: document.querySelector('input[name="result"]:checked').value,
+      instructorPotential: document.getElementById('instructorPotential').checked,
+      instructorName: document.getElementById('instructorName').value
+    };
+
+    for (let i = 1; i <= 8; i++) {
+      payload[`item${i}`] = document.querySelector(`input[name="item${i}"]:checked`).value;
+    }
+
+    fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('assessmentForm').reset();
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit Assessment";
+      alertBox.className = "alert alert-success mt-3";
+      alertBox.innerText = "Circulation Assessment saved successfully to Google Sheet!";
+      alertBox.style.display = "block";
+      setTimeout(() => { alertBox.style.display = "none"; }, 5000);
+    })
+    .catch(error => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit Assessment";
+      alertBox.className = "alert alert-danger mt-3";
+      alertBox.innerText = "Submission failed: " + error.message;
+      alertBox.style.display = "block";
+    });
+  }
+</script>
+
+</body>
+</html>
