@@ -15,6 +15,8 @@
       --accent-primary: #c0392b;
       --accent-moulage: #4f46e5;
       --accent-mcq: #0f766e;
+      --accent-grand: #0284c7;
+      --accent-pct: #15803d;
     }
 
     body {
@@ -31,7 +33,7 @@
       position: sticky;
       top: 15px;
       z-index: 1000;
-      max-width: 1200px;
+      max-width: 1350px;
       margin: 0 auto;
       width: calc(100% - 30px);
       background: rgba(255, 255, 255, 0.95);
@@ -95,7 +97,7 @@
 
     /* Main Container */
     .dashboard-wrapper {
-      max-width: 1350px; /* Widened for the extra column */
+      max-width: 1400px;
       width: 100%;
       margin: 30px auto 60px;
       padding: 0 16px;
@@ -134,7 +136,7 @@
     }
 
     .table th {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #64748b;
@@ -142,27 +144,51 @@
       background-color: #f8fafc;
       vertical-align: middle;
       border-bottom: 2px solid #e2e8f0;
+      padding: 10px 6px;
     }
 
     .table td {
       vertical-align: middle;
-      font-size: 0.85rem;
-      padding: 12px 8px;
+      font-size: 0.82rem;
+      padding: 10px 6px;
     }
 
     .badge-status {
       font-size: 0.72rem;
       font-weight: 700;
-      padding: 4px 8px;
+      padding: 4px 7px;
       border-radius: 6px;
       white-space: nowrap;
     }
 
     .badge-pass { background: #dcfce7; color: #15803d; }
     .badge-fail { background: #fee2e2; color: #b91c1c; }
-    .badge-remedial { background: #fef08a; color: #854d0e; } /* Added for Moulage Remedial */
+    .badge-remedial { background: #fef08a; color: #854d0e; }
     .badge-pending { background: #f1f5f9; color: #64748b; }
     .badge-pot { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+    /* New Columns Highlighting */
+    .total-badge {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-grand);
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      padding: 5px 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .pct-badge {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-pct);
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      padding: 5px 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
 
     /* Footer */
     footer {
@@ -211,7 +237,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
       <div>
         <h1 class="h3 fw-bold mb-1">TLS ADEC : Consolidated Summary</h1>
-        <p class="text-muted small mb-0">Overview of candidate scores across Skill Stations, Moulage, and MCQ.</p>
+        <p class="text-muted small mb-0">Full candidate performance summary combining 4 Skill Stations, Moulage, and MCQ Examination (Max 119 Points).</p>
       </div>
       <div class="d-flex gap-2 mt-3 mt-md-0">
         <button onclick="fetchSummary()" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
@@ -294,12 +320,14 @@
               <th class="text-center" style="color: var(--accent-primary);">Primary Survey<br><span class="fw-normal text-muted" style="font-size: 0.65rem;">/14</span></th>
               <th class="text-center" style="color: var(--accent-moulage);">Moulage<br><span class="fw-normal text-muted" style="font-size: 0.65rem;">/38</span></th>
               <th class="text-center" style="color: var(--accent-mcq);">MCQ<br><span class="fw-normal text-muted" style="font-size: 0.65rem;">/40</span></th>
+              <th class="text-center bg-light" style="color: var(--accent-grand); border-left: 2px solid #e2e8f0;">Total Points<br><span class="fw-normal text-muted" style="font-size: 0.65rem;">/119</span></th>
+              <th class="text-center bg-light" style="color: var(--accent-pct);">Overall %<br><span class="fw-normal text-muted" style="font-size: 0.65rem;">(100%)</span></th>
               <th class="text-center">Potentials</th>
             </tr>
           </thead>
           <tbody id="tableBody">
             <tr>
-              <td colspan="9" class="text-center py-4 text-muted">
+              <td colspan="11" class="text-center py-4 text-muted">
                 <span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading assessment data from Google Sheets...
               </td>
             </tr>
@@ -326,6 +354,8 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyG2c-f6h2yJSlSwa6yuANjKnscsH-S9S1lNih9YFRx4WMH_vFRDOw8CnSHVoI51_02/exec";
 
+    const GRAND_MAX_POINTS = 119; // 12 + 8 + 7 + 14 + 38 + 40
+
     const studentList = [
       "ABDUL LATIFF BIN SHARI", "AHMAD AZIM AFIFI BIN SHARUPUDDIN", "AKMAL RIDHWAN BIN YUSRIZAL",
       "ARIF AKMAL BIN ABDUL WAHAB", "BUVANESWARY A/P PUSHPARAJAH", "CHIN HUI ZHI",
@@ -339,14 +369,29 @@
 
     function fetchSummary() {
       const tbody = document.getElementById("tableBody");
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2" role="status"></span> Fetching latest scores...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="11" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2" role="status"></span> Fetching latest scores...</td></tr>`;
 
       fetch(`${API_URL}?action=getSummary`)
         .then(res => res.json())
         .then(data => renderSummary(data))
         .catch(err => {
-          tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-danger"><i class="bi bi-exclamation-circle me-1"></i> Failed to retrieve data from Google Sheets.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="11" class="text-center py-4 text-danger"><i class="bi bi-exclamation-circle me-1"></i> Failed to retrieve data from Google Sheets.</td></tr>`;
         });
+    }
+
+    // Helper to safely convert raw score strings/numbers into numerical values
+    function parseNumericScore(val) {
+      if (val === undefined || val === null || val === "-") return 0;
+      if (typeof val === 'number') return val;
+      
+      let str = val.toString().trim();
+      if (str.includes('/')) {
+        let parts = str.split('/');
+        let p = parseFloat(parts[0].trim());
+        return isNaN(p) ? 0 : p;
+      }
+      let num = parseFloat(str);
+      return isNaN(num) ? 0 : num;
     }
 
     function renderSummary(data) {
@@ -369,7 +414,18 @@
         if (mcq.score !== "-") mcqCompleted++;
         if (moulage.score !== "-") moulageCompleted++;
 
-        // Checks all stations for Potential OR if they were marked "Best Student" in Moulage
+        // Calculate Grand Total Points
+        const sAirway = parseNumericScore(airway.score);
+        const sCirc = parseNumericScore(circ.score);
+        const sImmo = parseNumericScore(immo.score);
+        const sPrimary = parseNumericScore(primary.score);
+        const sMoulage = parseNumericScore(moulage.score);
+        const sMcq = parseNumericScore(mcq.score);
+
+        const totalPoints = sAirway + sCirc + sImmo + sPrimary + sMoulage + sMcq;
+        const percentage = ((totalPoints / GRAND_MAX_POINTS) * 100).toFixed(1);
+
+        // Check if marked potential in any station or Moulage
         const isPotential = [airway.potential, circ.potential, immo.potential, primary.potential, moulage.potential].includes("YES");
         if (isPotential) potentialCount++;
 
@@ -383,6 +439,8 @@
           <td class="text-center">${formatStationBadge(primary.score, primary.result, 14)}</td>
           <td class="text-center">${formatStationBadge(moulage.score, moulage.result, 38)}</td>
           <td class="text-center">${formatMcqBadge(mcq.score)}</td>
+          <td class="text-center bg-light" style="border-left: 2px solid #e2e8f0;"><span class="total-badge">${totalPoints} / ${GRAND_MAX_POINTS}</span></td>
+          <td class="text-center bg-light"><span class="pct-badge">${percentage}%</span></td>
           <td class="text-center">${isPotential ? '<span class="badge-status badge-pot"><i class="bi bi-star-fill me-1"></i>Yes</span>' : '<span class="text-muted small">-</span>'}</td>
         `;
         tbody.appendChild(tr);
@@ -399,7 +457,7 @@
       const resUpper = result.toUpperCase();
       let badgeClass = "badge-fail";
       if (resUpper === "PASS") badgeClass = "badge-pass";
-      else if (resUpper === "REMEDIAL") badgeClass = "badge-remedial"; // Specifically for Moulage
+      else if (resUpper === "REMEDIAL") badgeClass = "badge-remedial";
 
       return `<span class="badge-status ${badgeClass}">${score}/${max} (${resUpper.substring(0,4)})</span>`;
     }
